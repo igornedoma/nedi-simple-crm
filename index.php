@@ -21,6 +21,12 @@ Route::add('/', function() {
 
 });
 
+Route::add('/phpinfo', function() {
+  //echo 'Nedi Simple CRM';
+  phpinfo();
+
+});
+
 Route::add('/admin', function() {
   //echo 'Nedi Simple CRM';
   //phpinfo();
@@ -34,6 +40,15 @@ header("Access-Control-Allow-Headers: access");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
   include(dirname(__FILE__).'/api/src/Login.php');
+}, 'post');
+
+// CSV Import
+Route::add('/api/import', function() {
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: access");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  include(dirname(__FILE__).'/api/src/CsvImport.php');
 }, 'post');
 
 // Registration
