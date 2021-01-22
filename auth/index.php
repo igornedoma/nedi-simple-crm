@@ -11,7 +11,7 @@ include 'api/src/Env/EnvLoader.php';
 
 $env = getenv('APP_ENV');
 // Define a global basepath
-define('BASEPATH','/');
+define('BASEPATH','/auth');
 
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Origin: *");
@@ -89,6 +89,14 @@ header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
   include(dirname(__FILE__).'/api/src/UserList.php');
 }, 'get');
+// User delete
+Route::add('/api/user-delete/([0-9]*)', function($deleteId) {
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: access");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  include(dirname(__FILE__).'/api/src/UserDelete.php');
+}, 'delete');
 
 
 // Add a 404 not found route

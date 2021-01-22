@@ -18,7 +18,12 @@ $allHeaders = getallheaders();
 $auth = new Auth($conn,$allHeaders);
 
 // GET DATA FORM REQUEST
-$data = json_decode(file_get_contents("php://input"));
+//$data = json_decode(file_get_contents("php://input"));
+$data = new stdClass();
+$data->email = $_POST['email'];
+$data->password = $_POST['password'];
+$data->name = $_POST['name'];
+$data->role = $_POST['role'];
 $returnData = [];
 
 

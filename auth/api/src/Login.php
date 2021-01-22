@@ -16,7 +16,10 @@ require __DIR__.'/../classes/JwtHandler.php';
 $db_connection = new Database();
 $conn = $db_connection->dbConnection();
 
-$data = json_decode(file_get_contents("php://input"));
+//$data = json_decode(file_get_contents("php://input"));
+$data = new stdClass();
+$data->email = $_POST['email'];
+$data->password = $_POST['password'];
 $returnData = [];
 
 // CHECKING EMPTY FIELDS
