@@ -38,9 +38,40 @@ class Auth extends JwtHandler{
         endif;
     }
 
+    public function isAuthAdmin(){
+            if(array_key_exists('Authorization',$this->headers) && !empty(trim($this->headers['Authorization']))):
+                $this->token = explode(" ", trim($this->headers['Authorization']));
+                if(isset($this->token[1]) && !empty(trim($this->token[1]))):
+
+                    $data = $this->_jwt_decode_data($this->token[1]);
+
+                    if(isset($data['auth']) && isset($data['data']->user_id) && $data['auth']):
+                        $user = $this->fetchUser($data['data']->user_id);
+
+                        if($user['user']['role'] === "admin"):
+                            return true;
+                        else:
+                            return false;
+                        endif;
+                    else:
+                        return null;
+
+                    endif; // End of isset($this->token[1]) && !empty(trim($this->token[1]))
+
+                else:
+                    return null;
+
+                endif;// End of isset($this->token[1]) && !empty(trim($this->token[1]))
+
+            else:
+                return null;
+
+            endif;
+        }
+
     protected function fetchUser($user_id){
         try{
-            $fetch_user_by_id = "SELECT `name`,`email` FROM `users` WHERE `id`=:id";
+            $fetch_user_by_id = "SELECT `name`,`email`,`role` FROM `users` WHERE `id`=:id";
             $query_stmt = $this->db->prepare($fetch_user_by_id);
             $query_stmt->bindValue(':id', $user_id,PDO::PARAM_INT);
             $query_stmt->execute();

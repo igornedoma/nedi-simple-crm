@@ -12,11 +12,17 @@ function msg($success,$status,$message,$extra = []){
 // INCLUDING DATABASE AND MAKING OBJECT
 require __DIR__.'/../classes/FileImport.php';
 require __DIR__.'/../classes/Database.php';
+require __DIR__.'/../middlewares/Auth.php';
 $db_connection = new Database();
 $conn = $db_connection->dbConnection();
 
 
+$allHeaders = getallheaders();
+$auth = new Auth($conn,$allHeaders);
 
+if(!$auth->isAuthAdmin()):
+    $returnData = msg(0,403,'This action is allowed only for admins!');
+else:
 
 $response = [];
 $importer = new CsvImporter($_FILES["csv"]["tmp_name"],true);
@@ -97,5 +103,6 @@ array_push($response, $returnData);
 
 }
 
+endif;
 echo json_encode($response);
 

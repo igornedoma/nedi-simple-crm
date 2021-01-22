@@ -26,6 +26,7 @@ if(!$auth->isAuthAdmin()):
     $returnData = msg(0,403,'This action is allowed only for admins!');
 else:
 
+
 // CHECKING EMPTY FIELDS
 if(!isset($data->name)
     || !isset($data->email)
@@ -47,7 +48,7 @@ else:
     $email = trim($data->email);
     $password = trim($data->password);
     $role = trim($data->role);
-
+    var_dump($role);
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)):
         $returnData = msg(0,422,'Invalid Email Address!');
 
@@ -58,7 +59,7 @@ else:
         $returnData = msg(0,422,'Your name must be at least 3 characters long!');
 
     elseif( !in_array($role, array("user", "admin"))):
-                $returnData = msg(0,422,'You are allowed to choose role between user and admin');
+            $returnData = msg(0,422,'You are allowed to choose role between user and admin');
 
     else:
         try{
@@ -68,23 +69,22 @@ else:
             $check_email_stmt->bindValue(':email', $email,PDO::PARAM_STR);
             $check_email_stmt->execute();
 
-            if($check_email_stmt->rowCount()):
-                $returnData = msg(0,422, 'This E-mail already in use!');
+            if(!$check_email_stmt->rowCount()):
+                $returnData = msg(0,422, 'This E-mail doesn`t exists!');
 
             else:
-                $insert_query = "INSERT INTO `users`(`name`,`email`,`password`,`role`) VALUES(:name,:email,:password,:role)";
+                $insert_query = "UPDATE `users` SET name = :name, password = :password, role = :role WHERE email = :email";
 
                 $insert_stmt = $conn->prepare($insert_query);
 
                 // DATA BINDING
                 $insert_stmt->bindValue(':name', htmlspecialchars(strip_tags($name)),PDO::PARAM_STR);
-                $insert_stmt->bindValue(':email', $email,PDO::PARAM_STR);
                 $insert_stmt->bindValue(':password', password_hash($password, PASSWORD_DEFAULT),PDO::PARAM_STR);
                 $insert_stmt->bindValue(':role', $role ,PDO::PARAM_STR);
-
+                $insert_stmt->bindValue(':email', $email,PDO::PARAM_STR);
                 $insert_stmt->execute();
 
-                $returnData = msg(1,201,'You have successfully registered.');
+                $returnData = msg(1,201,'Your user update was successful.');
 
             endif;
 

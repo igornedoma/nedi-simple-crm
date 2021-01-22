@@ -8,30 +8,33 @@ include 'api/src/Router/Route.php';
 include 'api/src/Env/EnvLoader.php';
 
 (new DotEnv(__DIR__ . '/.env'))->load();
+
+$env = getenv('APP_ENV');
 // Define a global basepath
 define('BASEPATH','/');
 
-
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Origin: *");
+header("Cross-Origin-Window-Policy: deny");
 
 
 // Add base route (startpage)
 Route::add('/', function() {
   echo 'Nedi Simple CRM';
-  //phpinfo();
-
 });
+if($env == 'dev') {
+    Route::add('/phpinfo', function() {
+      phpinfo();
+    });
 
-Route::add('/phpinfo', function() {
-  //echo 'Nedi Simple CRM';
-  phpinfo();
-
-});
-
+    Route::add('/adminer', function() {
+      include(dirname(__FILE__).'/api/src/adminer-4.7.8-cs.php');
+    }, ['get', 'post', 'delete', 'patch']);
+}
 Route::add('/admin', function() {
-  //echo 'Nedi Simple CRM';
-  //phpinfo();
   include(dirname(__FILE__).'/crm-admin/dist/index.html');
 });
+
 
 // Login
 Route::add('/api/login', function() {
@@ -60,6 +63,15 @@ header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers
   include(dirname(__FILE__).'/api/src/Register.php');
 }, 'post');
 
+// User Edit
+Route::add('/api/user-edit', function() {
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: access");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  include(dirname(__FILE__).'/api/src/UserEdit.php');
+}, 'post');
+
 // User Info
 Route::add('/api/user-info', function() {
 header("Access-Control-Allow-Origin: *");
@@ -67,6 +79,15 @@ header("Access-Control-Allow-Headers: access");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
   include(dirname(__FILE__).'/api/src/UserInfo.php');
+}, 'get');
+
+// User list
+Route::add('/api/user-list', function() {
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: access");
+header("Content-Type: application/json; charset=UTF-8");
+header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  include(dirname(__FILE__).'/api/src/UserList.php');
 }, 'get');
 
 
