@@ -26,7 +26,7 @@ if(!$auth->isAuthAdmin()):
 else:
 
 try{
-            $fetch_users = "SELECT * FROM `users`";
+            $fetch_users = "SELECT `id`,`name`,`email`,`role` FROM `users`";
             $query_stmt = $conn->prepare($fetch_users);
             $query_stmt->execute();
 

@@ -21,7 +21,7 @@ $auth = new Auth($conn,$allHeaders);
 //$data = json_decode(file_get_contents("php://input"));
 $data = new stdClass();
 $data->email = $_POST['email'];
-$data->password = $_POST['password'];
+$data->password = $_POST['password'] ?? null;
 $data->name = $_POST['name'];
 $data->role = $_POST['role'];
 $returnData = [];
@@ -34,15 +34,13 @@ else:
 // CHECKING EMPTY FIELDS
 if(!isset($data->name)
     || !isset($data->email)
-    || !isset($data->password)
     || !isset($data->role)
     || empty(trim($data->name))
     || empty(trim($data->email))
-    || empty(trim($data->password))
     || empty(trim($data->role))
     ):
 
-    $fields = ['fields' => ['name','email','password','role']];
+    $fields = ['fields' => ['name','email','role']];
     $returnData = msg(0,422,'Please Fill in all Required Fields!',$fields);
 
 // IF THERE ARE NO EMPTY FIELDS THEN-
@@ -53,13 +51,15 @@ else:
     $password = trim($data->password);
     $role = trim($data->role);
 
+
+
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)):
         $returnData = msg(0,422,'Invalid Email Address!');
 
-    elseif(strlen($password) < 8):
+    elseif(strlen($password) < 8 && $password != null):
         $returnData = msg(0,422,'Your password must be at least 8 characters long!');
 
-    elseif(strlen($name) < 3):
+    elseif(strlen($name) < 3 && $password != null):
         $returnData = msg(0,422,'Your name must be at least 3 characters long!');
 
     elseif( !in_array($role, array("user", "admin"))):
@@ -77,13 +77,19 @@ else:
                 $returnData = msg(0,422, 'This E-mail doesn`t exists!');
 
             else:
-                $insert_query = "UPDATE `users` SET name = :name, password = :password, role = :role WHERE email = :email";
-
+                if($password != null):
+                    $insert_query = "UPDATE `users` SET name = :name, password = :password, role = :role WHERE email = :email";
+                else:
+                    $insert_query = "UPDATE `users` SET name = :name, role = :role WHERE email = :email";
+                endif;
                 $insert_stmt = $conn->prepare($insert_query);
 
                 // DATA BINDING
                 $insert_stmt->bindValue(':name', htmlspecialchars(strip_tags($name)),PDO::PARAM_STR);
-                $insert_stmt->bindValue(':password', password_hash($password, PASSWORD_DEFAULT),PDO::PARAM_STR);
+                if ($password != null) {
+                    $insert_stmt->bindValue(':password', password_hash($password, PASSWORD_DEFAULT),PDO::PARAM_STR);
+                }
+
                 $insert_stmt->bindValue(':role', $role ,PDO::PARAM_STR);
                 $insert_stmt->bindValue(':email', $email,PDO::PARAM_STR);
                 $insert_stmt->execute();

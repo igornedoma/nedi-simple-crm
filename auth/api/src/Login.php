@@ -69,11 +69,7 @@ else:
                         array("user_id"=> $row['id'])
                     );
 
-                    $returnData = [
-                        'success' => 1,
-                        'message' => 'You have successfully logged in.',
-                        'token' => $token
-                    ];
+                    $returnData = msg(1, 200, 'You have successfully logged in.', ['token'=>$token]);
 
                 // IF INVALID PASSWORD
                 else:

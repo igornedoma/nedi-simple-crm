@@ -9,7 +9,9 @@
 
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">Sign out</a>
+
+            <a class="nav-link" v-on:click="logout">Sign out</a>
+
         </li>
       </ul>
     </header>
@@ -45,6 +47,31 @@
   </div>
 
 </template>
+
+<script>
+  import axios from 'axios'
+
+  export default {
+    name: 'App',
+    components: {
+      axios
+    },data () {
+      return {
+
+      }
+    },
+    methods: {
+      logout() {
+        localStorage.removeItem('authTokenSimpleCrm')
+        this.$router.push('/login?needAuth=true')
+      }
+
+    },
+    mounted() {
+
+    }
+  }
+</script>
 
 <style lang="less">
 #app {

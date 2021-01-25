@@ -18,7 +18,8 @@
         name: 'Login',
         components: {
             axios
-        },data () {
+        },
+        data () {
             return {
                 credentials: {
                     email: '',
@@ -37,11 +38,10 @@
                 }).catch(e => {
                     console.error(e)
                 })
-                localStorage.setItem('authTokenSimpleCrm', 'token')
             }
         },
         mounted() {
-            console.log(this.$route.name)
+
         }
     }
 </script>
