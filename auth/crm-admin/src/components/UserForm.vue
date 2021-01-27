@@ -94,7 +94,9 @@
                         Authorization: 'Bearer ' + this.token
                     }
                 }).then(res => {
-                    this.credentials = res.data.user;
+                    this.credentials.name = res.data.user.name;
+                    this.credentials.role = res.data.user.role;
+                    this.credentials.email = res.data.user.email;
                     console.log(this.credentials)
                 })
 

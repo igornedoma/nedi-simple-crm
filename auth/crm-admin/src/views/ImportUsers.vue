@@ -11,26 +11,6 @@
                     <button type="submit" class="btn btn-primary" v-on:click="submitFile">Submit</button>
                 </form>
                 <br>
-                <h2>Result Box</h2>
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                        <tr>
-                            <th>Success</th>
-                            <th>Status</th>
-                            <th>Message</th>
-                        </tr>
-                        </thead>
-                        <tbody v-if="importList">
-                        <tr v-for="item in importList" :class="getRowColor(item.status)">
-                            <td>{{getResult(item.success)}}</td>
-                            <td>{{item.status}}</td>
-                            <td>{{item.message}}</td>
-
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
 
             </div>
         </div>
@@ -58,7 +38,13 @@
                     let token = localStorage.getItem('authTokenSimpleCrm');
                     formData.append('csv', this.file);
                     //console.log('>> formData >> ', formData);
-
+                    this.$toast.open({
+                        message: 'Import started!',
+                        type: 'warning',
+                        position: 'top-right',
+                        duration: 300000
+                        // all of other options may go here
+                    });
                     axios.post('/auth/api/import',
                         formData, {
                             headers: {
@@ -67,12 +53,12 @@
                             }
                         }
                     ).then(res => {
-                        //console.log('SUCCESS!!');
+                        console.log('SUCCESS!!');
                         //console.log(res.data);
-                        this.importList = res.data;
-
+                        //this.importList = res.data;
+                        this.$toast.clear();
                         this.$toast.open({
-                            message: 'Users were imported. Check the result box.',
+                            message: res.data.message,
                             type: 'info',
                             position: 'top-right'
                             // all of other options may go here
@@ -80,6 +66,12 @@
                     })
                         .catch(e => {
                             console.error(e);
+                            this.$toast.open({
+                                message: 'Oops, something went wrong!',
+                                type: 'danger',
+                                position: 'top-right'
+                                // all of other options may go here
+                            });
                         });
                 }
 
@@ -87,22 +79,6 @@
             handleFileUpload() {
                 this.file = this.$refs.file.files[0];
                 //console.log('>>>> 1st element in files array >>>> ', this.file);
-            },
-            getRowColor (status) {
-                if (status == 201) {
-                    return "table-success";
-                }
-                else {
-                    return "table-danger";
-                }
-            },
-            getResult (result) {
-                if (result == 1) {
-                    return "Yes!";
-                }
-                else {
-                    return "No.";
-                }
             }
         }
     }
